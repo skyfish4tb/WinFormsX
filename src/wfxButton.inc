@@ -144,6 +144,20 @@ Property wfxButton.BackColorDown() As COLORREF
    Property = _BackColorDown 
 End Property
 
+Property wfxButton.BackColorHot( ByVal nValue As COLORREF )
+   If _XpButtonPtr Then 
+      _XpButtonPtr->SetButtonBkColorHot(nValue, True)
+   End If
+   _BackColorHot = nValue
+End Property
+
+Property wfxButton.BackColorHot() As COLORREF 
+   If _XpButtonPtr Then 
+      _BackColorHot = _XpButtonPtr->GetButtonBkColorHot
+   End If
+   Property = _BackColorHot
+End Property
+
 Property wfxButton.TextAlign( ByVal nValue As ButtonAlignment )
    If _XpButtonPtr Then 
       Dim As Long wsStyle
@@ -204,7 +218,7 @@ Function wfxButton.Show(ByVal hWndParent As HWnd = 0) As Long
    _CtrlID = this.Parent->GetNextCtrlID()
    _XpButtonPtr = New CXpButton(pWindow, _CtrlID, this.Text, this.Left, this.top, this.Width, this.height )
    this.hWindow = _XpButtonPtr->hWindow
-   SetWindowSubclass(this.hWindow, Cast(SUBCLASSPROC, @wfxApplication.SubclassProc), 100, Cast(DWORD_PTR, 0))
+   SetWindowSubclass(this.hWindow, Cast(SUBCLASSPROC, @wfxApplication.SubclassProc), _CtrlID, Cast(DWORD_PTR, 0))
 
    ' Should we enable drag and drop files
    If this.AllowDrop Then DragAcceptFiles(this.hWindow, CTRUE)
@@ -214,6 +228,7 @@ Function wfxButton.Show(ByVal hWndParent As HWnd = 0) As Long
    this.TextAlign         = _TextAlign
    this.BackColor         = _BackColor
    this.BackColorDown     = _BackColorDown
+   this.BackColorHot      = _BackColorHot
    this.TextForeColor     = _TextForeColor
    this.TextForeColorDown = _TextForeColorDown
    this.TextBackColor     = _TextBackColor
