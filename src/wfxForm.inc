@@ -119,7 +119,7 @@ Property wfxForm.BorderStyle( ByVal nValue As FormBorderStyle )
       End Select     
       AfxAddWindowStyle(this.hWindow, wsStyle)
       AfxAddWindowExStyle(this.hWindow, wsExStyle)
-      SetWindowPos( this.hWindow, 0, 0, 0, 0, 0, SWP_NOZORDER Or SWP_NOMOVE Or SWP_NOSIZE Or SWP_DRAWFRAME)
+      AfxRedrawNonClientArea(this.hWindow)
    End If
    _BorderStyle = nValue
 End Property
@@ -210,23 +210,25 @@ Property wfxForm.KeyPreview( ByVal nValue As boolean )
    _KeyPreview = nValue
 End Property
 
-property wfxForm.ShowInTaskBar() as boolean
-   if this.pWindow->hWindow THEN
-      _ShowInTaskBar = (AfxGetWindowExStyle(this.pWindow->hWindow) And WS_EX_APPWINDOW)
-   End If
-   Property = _ShowInTaskBar
-end property
-
-property wfxForm.ShowInTaskBar( byval nValue as boolean )
-   if this.pWindow->hWindow THEN
-      If nValue Then
-         AfxAddWindowExStyle(this.hWindow, WS_EX_APPWINDOW)
-      Else
-         AfxRemoveWindowExStyle(this.hWindow, WS_EX_APPWINDOW)
-      End If   
-   End If
-   _ShowInTaskBar = nValue
-end property
+'property wfxForm.ShowInTaskBar() as boolean
+'   if this.pWindow->hWindow THEN
+'      _ShowInTaskBar = (AfxGetWindowExStyle(this.pWindow->hWindow) And WS_EX_APPWINDOW)
+'   End If
+'   Property = _ShowInTaskBar
+'end property
+'
+'property wfxForm.ShowInTaskBar( byval nValue as boolean )
+'   if this.pWindow->hWindow THEN
+'      If nValue Then
+'         AfxRemoveWindowExStyle(this.hWindow, WS_EX_TOOLWINDOW)
+'         AfxAddWindowExStyle(this.hWindow, WS_EX_APPWINDOW)
+'      Else
+'         AfxRemoveWindowExStyle(this.hWindow, WS_EX_APPWINDOW)
+'         AfxAddWindowExStyle(this.hWindow, WS_EX_TOOLWINDOW)
+'      End If   
+'   End If
+'   _ShowInTaskBar = nValue
+'end property
 
 property wfxForm.MaximumHeight() as long
    property = _MaximumHeight
@@ -276,6 +278,32 @@ Property wfxForm.CancelButton( byval nValue as wfxButton ptr )
    _CancelButton = nValue
 END PROPERTY
 
+'Property wfxForm.MainMenu() As wfxMainMenu 
+'   if _wfxMainMenuPtr = 0 then exit property
+'   property = *(_wfxMainMenuPtr)
+'END PROPERTY
+
+'Property wfxForm.MainMenu( byval nValue as wfxMainMenu ptr )
+'   _wfxMainMenuPtr = nValue
+'END PROPERTY
+
+property wfxForm.Icon() as CWSTR
+   property = _Icon
+end property
+
+property wfxForm.Icon( byref cwzValue as wstring )
+   if this.pWindow->hWindow THEN
+      If len(cwzValue) Then
+         dim hIcon as HANDLE
+         hIcon = AfxGdipIconFromRes(this.pWindow->InstanceHandle, cwzValue)
+         SendMessage( this.hWindow, WM_SETICON, CAST(WPARAM, ICON_BIG), CAST(LPARAM, hIcon))
+         SendMessage( this.hWindow, WM_SETICON, CAST(WPARAM, ICON_SMALL), CAST(LPARAM, hIcon))
+      End If   
+   End If
+   AfxRedrawNonClientArea(this.hWindow)
+   _Icon = cwzValue
+end property
+
 
 property wfxForm.ClientSize() as wfxSize
    if this.pWindow->hWindow THEN
@@ -293,6 +321,36 @@ property wfxForm.ClientSize( byval nWidth as long, byval nHeight as long )
       _ClientSize.Height = nHeight
    end if   
 end property
+
+
+function wfxForm.ScaleX( byval nValue as long ) as Long
+   if this.pWindow THEN
+      nValue = this.pWindow->ScaleX(nValue)
+   end if
+   return nValue
+end function       
+
+function wfxForm.ScaleY( byval nValue as long ) as Long
+   if this.pWindow THEN
+      nValue = this.pWindow->ScaleY(nValue)
+   end if
+   return nValue
+end function       
+
+function wfxForm.UnScaleX( byval nValue as long ) as Long
+   if this.pWindow THEN
+      nValue = this.pWindow->UnScaleX(nValue)
+   end if
+   return nValue
+end function       
+
+function wfxForm.UnScaleY( byval nValue as long ) as Long
+   if this.pWindow THEN
+      nValue = this.pWindow->UnScaleY(nValue)
+   end if
+   return nValue
+end function       
+
 
 function wfxForm.GetNextCtrlID() as Long     
    ' This function is internal to the class.
@@ -392,9 +450,9 @@ function wfxForm.CreateFormInternal( byval hWndParent as hwnd, byval IsFormModal
          dwExStyle = dwExStyle or WS_EX_DLGMODALFRAME
    end select     
 
-   If this.ShowInTaskBar Then
-      dwExStyle = dwExStyle Or WS_EX_APPWINDOW
-   End If
+'   If this.ShowInTaskBar Then
+'      dwExStyle = dwExStyle Or WS_EX_APPWINDOW
+'   End If
    
    ' Determine if the WS_VISIBLE style is set. Save that value in order to
    ' prevent the form moving on screen when the subsequent StartPosition 
@@ -404,11 +462,14 @@ function wfxForm.CreateFormInternal( byval hWndParent as hwnd, byval IsFormModal
  
    '  Create the main window based on properties set
    this.hWindow = this.pWindow->Create( hWndParent, _
-                         this.Text, _
-                         @wfxApplication.WndProc, _
-                         nLeft, nTop, nWidth, nHeight, _
-                         dwStyle, dwExStyle ) 
+                        this.Text, _
+                        @wfxApplication.WndProc, _
+                        nLeft, nTop, nWidth, nHeight, _
+                        dwStyle, dwExStyle ) 
 
+   ' Set the Form icons. hWindow must be valid.
+   this.Icon = _Icon
+   
    ' Should we enable drag and drop files
    if this.AllowDrop then DragAcceptFiles(this.hWindow, CTRUE)
 

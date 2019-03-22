@@ -20,7 +20,7 @@ Type wfxForm Extends wfxControl
       _MinimizeBox     as boolean = true
       _MaximizeBox     as boolean = true
       _ControlBox      as boolean = true
-      _ShowInTaskBar   as Boolean = true
+      '_ShowInTaskBar   as Boolean = true
       _ClientSize      as wfxSize 
       _NextCtrlID      as long    = 100
       _IsMainForm      as boolean = false 
@@ -30,11 +30,14 @@ Type wfxForm Extends wfxControl
       _MinimumWidth    as Long = 0
       _MaximumHeight   as Long = 0
       _MaximumWidth    as Long = 0
-      _AcceptButton as wfxButton ptr
-      _CancelButton as wfxButton ptr
+      _AcceptButton    as wfxButton ptr
+      _CancelButton    as wfxButton ptr
+      _wfxMainMenuPtr  as wfxMainMenu ptr
+      _Icon            as CWSTR
       
    Public:           
       Controls         As wfxLList
+      MainMenu         as wfxMainMenu
       
       pWindow As CWindow Ptr
       Declare Property WindowState() As FormWindowState
@@ -65,12 +68,20 @@ Type wfxForm Extends wfxControl
       Declare Property MaximumWidth() as long
       Declare Property KeyPreview() As boolean
       Declare Property KeyPreview( ByVal nValue As boolean )
-      Declare Property ShowInTaskBar() As boolean
-      Declare Property ShowInTaskBar( ByVal nValue As boolean )
+      'Declare Property ShowInTaskBar() As boolean
+      'Declare Property ShowInTaskBar( ByVal nValue As boolean )
+      declare function ScaleX( byval nValue as long ) as Long
+      declare function ScaleY( byval nValue as long ) as Long
+      declare function UnScaleX( byval nValue as long ) as Long
+      declare function UnScaleY( byval nValue as long ) as Long
       Declare Property AcceptButton() As wfxButton ptr
       Declare Property AcceptButton( byval nValue as wfxButton ptr )
       Declare Property CancelButton() As wfxButton ptr
       Declare Property CancelButton( byval nValue as wfxButton ptr )
+      'Declare Property MainMenu() As wfxMainMenu 
+      'Declare Property MainMenu( byval nValue as wfxMainMenu ptr )
+      declare property Icon() as CWSTR
+      declare property Icon( byref cwzValue as wstring )
 
       declare function GetNextCtrlID() as Long     
       declare function Close() as Long

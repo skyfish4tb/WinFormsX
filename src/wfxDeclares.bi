@@ -21,6 +21,10 @@ enum ControlType
    TrackBar
    Treeview
    Frame
+   MaskedEdit
+   ComboBox
+   MainMenu
+   RichEdit
 End Enum
 
 Enum FontStyles
@@ -90,6 +94,14 @@ Enum ImageLayout
    Zoom
 END ENUM
 
+enum ImageScale
+   None = 1
+   AutoSize
+   FitWidth
+   FitHeight   
+   Stretch
+end enum
+
 enum ButtonAlignment
    BottomCenter = 1
    BottomLeft   
@@ -109,6 +121,9 @@ enum LabelAlignment
    TopCenter    
    TopLeft      
    TopRight     
+   BottomCenter 
+   BottomLeft   
+   BottomRight  
 end enum
 
 Enum CharacterCase
@@ -142,6 +157,12 @@ Enum ListSelectionMode
    MultiSimple
    MultiExtended
 END ENUM
+
+enum ComboBoxStyle
+   Simple = 1
+   DropDown
+   DropDownList
+end enum
 
 
 type EventArgs as wfxEventArgs    ' forward reference

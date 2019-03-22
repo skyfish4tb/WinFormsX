@@ -195,6 +195,92 @@ Property wfxButton.TextAlign() As ButtonAlignment
    End If
 End Property
 
+property wfxButton.Image() as CWSTR
+   property = _Image
+end property
+
+property wfxButton.Image( byref cwzValue as wstring )
+   If _XpButtonPtr Then 
+      If len(cwzValue) Then
+         _XpButtonPtr->SetImageFromRes( this.Parent->pWindow->InstanceHandle, cwzValue )
+      End If    
+   End If
+   _Image = cwzValue
+end property
+
+property wfxButton.ImageHighDPI( byval nValue as boolean )
+   If _XpButtonPtr Then 
+      if nValue then 
+         _XpButtonPtr->SetImageSize( this.Parent->pWindow->ScaleX(_ImageWidth), _
+                                     this.Parent->pWindow->ScaleY(_ImageHeight), true )
+      else
+         _XpButtonPtr->SetImageSize( _ImageWidth, _ImageHeight, true )
+      end if
+   end if
+   _ImageHighDPI = nValue
+end property
+
+property wfxButton.ImageHighDPI() as boolean
+   property = _ImageHighDPI
+end property
+
+property wfxButton.ImageWidth( byval nValue as Long )
+   If _XpButtonPtr Then 
+      _XpButtonPtr->SetImageWidth( nValue )
+   End If
+   _ImageWidth = nValue
+end property
+
+property wfxButton.ImageWidth() as Long
+   If _XpButtonPtr Then 
+      _ImageWidth = _XpButtonPtr->GetImageWidth()
+   End If
+   property = _ImageWidth
+end property
+
+property wfxButton.ImageHeight( byval nValue as Long )
+   If _XpButtonPtr Then 
+      _XpButtonPtr->SetImageHeight( nValue )
+   End If
+   _ImageHeight = nValue
+end property
+
+property wfxButton.ImageHeight() as Long
+   If _XpButtonPtr Then 
+      _ImageHeight = _XpButtonPtr->GetImageHeight()
+   End If
+   property = _ImageHeight
+end property
+
+property wfxButton.ImageMargin( byval nValue as Long )
+   If _XpButtonPtr Then 
+      _XpButtonPtr->SetImageMargin( nValue )
+   End If
+   _ImageMargin = nValue
+end property
+
+property wfxButton.ImageMargin() as Long
+   If _XpButtonPtr Then 
+      _ImageMargin = _XpButtonPtr->GetImageMargin()
+   End If
+   property = _ImageMargin
+end property
+
+property wfxButton.TextMargin( byval nValue as Long )
+   If _XpButtonPtr Then 
+      _XpButtonPtr->SetTextMargin( nValue )
+   End If
+   _TextMargin = nValue
+end property
+
+property wfxButton.TextMargin() as Long
+   If _XpButtonPtr Then 
+      _TextMargin = _XpButtonPtr->GetTextMargin()
+   End If
+   property = _TextMargin
+end property
+
+
 Function wfxButton.Show(ByVal hWndParent As HWnd = 0) As Long
 
    ' If the control is created but simply hidden, then show it.
@@ -247,7 +333,13 @@ Function wfxButton.Show(ByVal hWndParent As HWnd = 0) As Long
    dim pNode as wfxLListNode ptr = this.Parent->Controls.search_data(@this)
    if pNode then pNode->hWindow = this.hWindow
       
-   this.Enabled = _Enabled
+   this.Image        = _Image
+   this.ImageWidth   = _ImageWidth
+   this.ImageHeight  = _ImageHeight
+   this.ImageHighDPI = _ImageHighDPI
+   this.ImageMargin  = _ImageMargin
+   this.TextMargin   = _TextMargin
+   this.Enabled      = _Enabled
 
    function = 0
 END FUNCTION

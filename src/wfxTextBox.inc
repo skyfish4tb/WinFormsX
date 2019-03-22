@@ -313,13 +313,17 @@ Function wfxTextBox.Show(ByVal hWndParent As HWnd = 0) As Long
    
    If _Multiline Then 
       dwStyle = dwStyle Or ES_MULTILINE 
-      If _AcceptsReturn Then dwStyle = dwStyle Or ES_WANTRETURN
+      If _AcceptsReturn Then dwStyle = dwStyle Or ES_WANTRETURN or ES_AUTOVSCROLL
       If _WordWrap = False Then dwStyle = dwStyle Or ES_AUTOHSCROLL
       wszClassName = "MULTILINETEXTBOX"
    else   
       dwStyle = dwStyle or ES_AUTOHSCROLL 
       wszClassName = "TEXTBOX"
    end if   
+   
+   if this.CtrlType = ControlType.RichEdit then
+      wszClassName = "RICHEDIT"
+   end if
    
    _CtrlID = this.Parent->GetNextCtrlID()
 

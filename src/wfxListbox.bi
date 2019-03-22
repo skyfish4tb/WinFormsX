@@ -57,6 +57,7 @@ END TYPE
 Type wfxListBox Extends wfxControl
    private:
       _TempItem As wfxListBoxItem
+      _TextAlign As LabelAlignment = LabelAlignment.MiddleLeft
       _AllowSelection As boolean 
       _BorderStyle As ControlBorderStyle = ControlBorderStyle.Fixed3D
       _ColumnWidth as long = 0
@@ -71,8 +72,30 @@ Type wfxListBox Extends wfxControl
       _TopIndex as Long
       _ItemsCollection as wfxListBoxItemsCollection
       _IsLoading as Boolean = true   ' internal
+      _BackColorHot  As COLORREF 
+      _ForeColorHot  As COLORREF 
+      _hBackBrushHot As HBRUSH 
+      _BackColorSelected  As COLORREF 
+      _ForeColorSelected  As COLORREF 
+      _hBackBrushSelected As HBRUSH 
+      _ItemHeight as long = 28
       
    Public:
+      Declare Function GetTextAlignStyleValue( ByVal nValue As LabelAlignment ) As Long
+      Declare Property TextAlign() As LabelAlignment
+      declare property TextAlign( byval nValue as LabelAlignment )
+      Declare Property hBackBrushHot() As HBRUSH   ' internal get
+      Declare Property BackColorHot() As COLORREF
+      Declare Property BackColorHot( ByVal nValue As COLORREF )
+      Declare Property hBackBrushSelected() As HBRUSH   ' internal get
+      Declare Property BackColorSelected() As COLORREF
+      Declare Property BackColorSelected( ByVal nValue As COLORREF )
+      declare property ForeColorHot() as COLORREF
+      Declare Property ForeColorHot( ByVal nValue As COLORREF )
+      declare property ForeColorSelected() as COLORREF
+      Declare Property ForeColorSelected( ByVal nValue As COLORREF )
+      Declare Property ItemHeight() As long
+      Declare Property ItemHeight( ByVal nValue As long)
       Declare Function Item( ByVal nIndex As Long) ByRef As wfxListBoxItem
       declare function Items byref As wfxListBoxItemsCollection
       Declare Property AllowSelection() As boolean
@@ -100,6 +123,7 @@ Type wfxListBox Extends wfxControl
       Declare Property TopIndex( ByVal nValue As long)
       
       Declare Constructor( byref wszName as wstring = "" )
+      declare destructor
       declare function Show(byval hWndParent as hwnd = 0) as long override
 
       OnAllEvents        as function( byref sender as wfxListBox, byref e as EventArgs ) as LRESULT
